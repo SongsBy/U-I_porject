@@ -9,6 +9,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  DateTime selectedTime = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -19,25 +21,62 @@ class _HomeScreenState extends State<HomeScreen> {
           width: MediaQuery.of(context).size.width,//기존에 사용 했던 double.infinity 보다 더 많이 사용 되고 제어 하기 쉬운 형태 
           child: Column(
             children: [
-              _top(),
-              _bottom()
+
+              _top(selectedTime: selectedTime,
+              onPressed: (){
+                onHeartPressed;
+              },
+              ),
+              _bottom(),
             ],
           ),
         ),
       ),
     );
   }
+
+
+  onHeartPressed(){
+    showCupertinoDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context){
+        return Align(
+          alignment: Alignment.center,
+          child: Container(
+            color: Colors.white,
+            height: 300,
+            child: CupertinoDatePicker(
+              mode: CupertinoDatePickerMode.date,
+              onDateTimeChanged: (DateTime date){
+                setState(() {
+                  selectedTime = date;
+                });
+              },
+              dateOrder: DatePickerDateOrder.ymd,
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
 
 class _top extends StatefulWidget {
-  const _top({super.key});
+  final DateTime selectedTime;
+  final VoidCallback? onPressed;
+
+  const _top({
+    required this.selectedTime,
+    required this.onPressed,
+    super.key
+  });
 
   @override
   State<_top> createState() => _topState();
 }
 
 class _topState extends State<_top> {
-  DateTime selectedTime = DateTime.now();
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
@@ -54,43 +93,20 @@ class _topState extends State<_top> {
               style: Theme.of(context).textTheme.displayMedium,
             ),
 
-            Text('${selectedTime.year}.${selectedTime.month}.${selectedTime.day}',
+            Text('${widget.selectedTime.year}.${widget.selectedTime.month}.${widget.selectedTime.day}',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
 
             IconButton(
               iconSize: 60,
               color: Colors.red,
-              onPressed: (){
-                showCupertinoDialog(
-                    context: context,
-                    barrierDismissible: true,
-                    builder: (BuildContext context){
-                      return Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          color: Colors.white,
-                          height: 300,
-                          child: CupertinoDatePicker(
-                            mode: CupertinoDatePickerMode.date,
-                            onDateTimeChanged: (DateTime date){
-                             setState(() {
-                               selectedTime = date;
-                             });
-                          },
-                            dateOrder: DatePickerDateOrder.ymd,
-                          ),
-                        ),
-                      );
-                    },
-                );
-              },
+              onPressed: widget.onPressed,
               icon: Icon(
                   Icons.favorite
               ),
             ),
 
-            Text('D+${now.difference(selectedTime).inDays + 1 }',
+            Text('D+${now.difference(widget.selectedTime).inDays + 1 }',
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
