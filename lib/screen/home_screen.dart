@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               _top(selectedTime: selectedTime,
               onPressed: (){
-                onHeartPressed;
+                onHeartPressed();
               },
               ),
               _bottom(),
@@ -48,6 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
             height: 300,
             child: CupertinoDatePicker(
               mode: CupertinoDatePickerMode.date,
+              initialDateTime: selectedTime,// 선택했던 날자 시점에서 초기회 됨.
+              maximumDate: DateTime.now(),//선택 할 수있는 낳자 제한 코드
               onDateTimeChanged: (DateTime date){
                 setState(() {
                   selectedTime = date;
